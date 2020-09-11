@@ -1,0 +1,61 @@
+server:
+  port: 2004
+spring:
+  application:
+    name: seata-business-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+
+dubbo:
+  application:
+    id: ${spring.application.name}
+    name: ${spring.application.name}
+
+  protocol:
+    # dubbo 协议
+    name: dubbo
+    # dubbo 协议端口（ -1 表示自增端口，从 20880 开始）
+    port: -1
+  registry:
+    # 挂载到 nacos
+    address: nacos://127.0.0.1:8848
+  cloud:
+    # 订阅的服务列表,以逗号分割
+    subscribed-services: seata-order-service,seata-storage-service
+  consumer:
+    #启动时是否检查依赖的服务
+    check: false
+    timeout: 5000
+
+
+# 配置监控
+management:
+  endpoints:
+    web:
+      exposure:
+        # spring boot actuator 监控所有端点
+        include: '*'
+
+seata:
+  enabled: true
+  application-id: seata-business
+  tx-service-group: edu_tx_group
+  config:
+    type: nacos
+    nacos:
+      namespace:
+      serverAddr: 127.0.0.1:8848
+      group: SEATA_GROUP
+      username: nacos
+      password: nacos
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 127.0.0.1:8848
+      group : SEATA_GROUP
+      namespace:
+      username: nacos
+      password: nacos
